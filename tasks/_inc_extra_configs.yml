@@ -1,5 +1,4 @@
 ---
-
 - name: Install extra execution host configs
   ansible.builtin.template:
     src: "{{ item.template }}"
@@ -16,6 +15,21 @@
     - name: gres.conf
       config: slurm_gres_config
       template: gres.conf.j2
+    - name: job_container.conf
+      config: slurm_job_container_config
+      templates: generic.conf.j2
+    - name: oci.conf
+      config: slurm_oci_config
+      templates: generic.conf.j2
+    - name: helpers.conf
+      config: slurm_helpers_config
+      templates: helpers.conf.j2
+    - name: topology.conf
+      config: slurm_topology_config
+      templates: topology.conf.j2
+    - name: burst_buffer.conf
+      config: slurm_burst_buffer_config
+      templates: generic.conf.j2
   loop_control:
     label: "{{ item.name }}"
   when: item.config in vars

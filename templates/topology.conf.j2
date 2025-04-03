@@ -1,0 +1,31 @@
+##
+## This file is maintained by Ansible - ALL MODIFICATIONS WILL BE REVERTED
+##
+{% set conf = lookup('vars', item.config) %}
+{% if conf.tree %}
+##################################################################
+# Slurm's network topology configuration file for use with the
+# topology/tree plugin
+##################################################################
+{% for tree in conf.tree %}
+{% if tree.nodes %}
+SwitchName={{ tree.name }} Nodes={{ tree.nodes }}
+{% endif %}
+{% if tree.switches %}
+SwitchName={{ tree.name }} Switches={{ tree.switches }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if conf.block %}
+##################################################################
+# Slurm's network topology configuration file for use with the
+# topology/block plugin
+##################################################################
+{% for block in conf.block %}
+BlockName={{ block.name }} Nodes={{ block.nodes }}
+{% endfor %}
+{% if conf.blocksizes %}
+BlockSizes={{ conf.blocksizes }}
+{% endif %}
+{% endif %}

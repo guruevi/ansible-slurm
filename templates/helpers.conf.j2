@@ -1,0 +1,20 @@
+##
+## This file is maintained by Ansible - ALL MODIFICATIONS WILL BE REVERTED
+##
+
+{% set conf = lookup('vars', item.config) %}
+{% for key, value in conf.items() %}
+  {% if key == 'Features' %}
+    {% for feature in value %}
+Feature={{ feature.Name }} Helper={{ feature.Helper }}
+    {% endfor %}
+  {% elif key == 'MutuallyExclusives' %}
+    {% for exclusive in value %}
+MutuallyExclusive={{ exclusive }}
+    {% endfor %}
+  {% else %}
+    {% if value is not none and value != omit %}
+{{ key }}={{ value }}
+    {% endif %}
+  {% endif %}
+{% endfor %}

@@ -54,7 +54,7 @@ Minimal setup, all services on one node:
       become: True
 ```
 
-More extensive example:
+More extensive example demonstrating all options:
 
 ```yaml
 - name: Slurm execution hosts
@@ -63,6 +63,9 @@ More extensive example:
     - role: galaxyproject.slurm
       become: True
   vars:
+    slurm_acct_gather_config:
+      AcctGatherNodeFreq: 30
+      AcctGatherFilesystemType: "acct_gather_filesystem/none"
     slurm_cgroup_config:
       CgroupMountpoint: "/sys/fs/cgroup"
       CgroupAutomount: yes
@@ -97,12 +100,31 @@ More extensive example:
       SwitchType: "switch/none"
       TaskPlugin: "task/affinity,task/cgroup"
       TaskPluginParam: Sched
+      JobContainerType: job_container/tmpfs
+      PrologFlags: Contain
     slurm_create_user: yes
     slurm_gres_config:
       - File: /dev/nvidia[0-3]
         Name: gpu
         NodeName: gpu[01-10]
         Type: tesla
+    slurm_helpers_config:
+      Features: 
+        - Name: nps1,nps2,nps4
+          Helper: /usr/local/bin/nps
+        - Name: mig=on
+          Helper: /usr/local/bin/mig
+        - Name: mig=off
+          Helper: /usr/local/bin/mig
+      MutuallyExclusives:
+        - nps1,nps2,nps4
+        - mig=on,mig=off
+      ExecTime: 60
+      BootTime: 60
+      AllowUserBoot: user1,user2
+    slurm_job_container_config:
+      AutoBasePath: true
+      BasePath: /var/nvme/storage Dirs=/tmp,/var/tmp
     slurm_munge_key: "../../../munge.key"
     slurm_nodes:
       - name: "gpu[01-10]"
@@ -110,6 +132,13 @@ More extensive example:
         Gres: "gpu:tesla:4"
         Sockets: 2
         ThreadsPerCore: 2
+    slurm_oci_config:
+      IgnoreFileConfigJson: true
+      EnvExclude: "^(SLURM_CONF|SLURM_CONF_SERVER)="
+      RunTimeEnvExclude: "^(SLURM_CONF|SLURM_CONF_SERVER)="
+      RunTimeRun: "singularity exec --userns %r %@"
+      RunTimeKill: "kill -s SIGTERM %p"
+      RunTimeDelete: "kill -s SIGKILL %p"
     slurm_partitions:
       - name: gpu
         Default: YES
@@ -124,6 +153,15 @@ More extensive example:
       name: slurm
       shell: "/usr/sbin/nologin"
       uid: 888
+    slurm_topology_config:
+      block:
+        - name: "block1"
+          nodes: "gpu[01-10]"
+      blocksizes: "30,120"
+      tree:
+        - name: "s2"
+          nodes: "gpu[01-10]"
+          switches: "s[0-1]"
 ```
 
 License
