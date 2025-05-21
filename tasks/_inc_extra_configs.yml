@@ -17,7 +17,7 @@
       template: gres.conf.j2
     - name: job_container.conf
       config: slurm_job_container_config
-      template: generic.conf.j2
+      template: gres.conf.j2
     - name: oci.conf
       config: slurm_oci_config
       template: generic.conf.j2

@@ -123,8 +123,10 @@ More extensive example demonstrating all options:
       BootTime: 60
       AllowUserBoot: user1,user2
     slurm_job_container_config:
-      AutoBasePath: true
-      BasePath: /var/nvme/storage Dirs=/tmp,/var/tmp
+      - NodeName: gpu[01-10]
+        Dirs: /tmp,/var/tmp
+        AutoBasePath: true
+        BasePath: /var/nvme/storage
     slurm_munge_key: "../../../munge.key"
     slurm_nodes:
       - name: "gpu[01-10]"
